@@ -1034,3 +1034,10 @@ td.token_rules p:last-child {
     background-color: white;
     border: 1px solid #e5e5e5;
 }
+.logo-year {
+	color: black;
+	font-size: 25px;
+	font-family: sans-serif;
+	font-weight:600;
+	text-align: center;
+}
