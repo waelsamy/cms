@@ -96,7 +96,7 @@ def safe_put_data(ranking, resource, data, operation):
     if 400 <= res.status_code < 600:
         msg = "Status %s while %s." % (res.status_code, operation)
         logger.warning(msg)
-        raise CannotSendError(msg)
+        """raise CannotSendError(msg)"""
 
 
 class ProxyOperation(QueueItem):
