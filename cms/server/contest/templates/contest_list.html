@@ -4,12 +4,12 @@
 {% endblock title %}
 {% block body %}
     <div class="hero-unit contest-list">
-	<img style="height:100%;display: block;  margin-left: auto;  margin-right: auto;" src="/static/new_logo.png" alt="Logo">
+	<img style="height:100%;display: block;  margin-left: auto;  margin-right: auto;" src="./static/img/eoi_logo_main.svg" alt="Logo">
         <h3>{% trans %}Choose a contest{% endtrans %}</h3>
         <ul class="nav nav-list">
     {% for c_name, c_iter in contest_list|dictsort(by="key") %}
             <li>
-		    {% if c_iter.stop > now and c_iter.stop < endofday  %} <a href="{{ url(c_iter.name) }}">{{ c_iter.description }}</a> {% endif %} 
+		    {% if c_iter.stop > now and c_iter.start < endofday  %} <a href="{{ url(c_iter.name) }}">{{ c_iter.description }}</a> {% endif %} 
             </li>
     {% endfor %}
         </ul>
