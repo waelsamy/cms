@@ -21,6 +21,7 @@ import os
 import sys
 import time
 from datetime import datetime
+from datetime import timedelta
 
 import babel.dates
 
@@ -49,6 +50,8 @@ def make_datetime(timestamp=None):
     else:
         return datetime.utcfromtimestamp(timestamp)
 
+def make_endofday_datetime(timestamp=None):
+    return datetime.combine(make_datetime(timestamp) + timedelta(days=1), datetime.min.time())
 
 EPOCH = datetime(1970, 1, 1)
 

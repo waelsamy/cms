@@ -35,6 +35,7 @@ from tornado.web import RequestHandler
 from cms.db import Session
 from cms.server.file_middleware import FileServerMiddleware
 from cmscommon.datetime import make_datetime
+from cmscommon.datetime import make_endofday_datetime
 
 
 logger = logging.getLogger(__name__)
@@ -167,6 +168,7 @@ class CommonRequestHandler(RequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.timestamp = make_datetime()
+        self.endofday = make_endofday_datetime()
         self.sql_session = Session()
         self.r_params = None
         self.contest = None

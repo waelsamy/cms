@@ -115,6 +115,7 @@ class BaseHandler(CommonRequestHandler):
         """
         ret = {}
         ret["now"] = self.timestamp
+        ret["endofday"] = self.endofday
         ret["utc"] = utc_tzinfo
         ret["url"] = self.url
 
