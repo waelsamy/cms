@@ -2,16 +2,50 @@
 {% block title %}
     {% trans %}Choose a contest{% endtrans %}
 {% endblock title %}
+
 {% block body %}
-    <div class="hero-unit contest-list">
-	<img style="height:100%;display: block;  margin-left: auto;  margin-right: auto;" src="./static/img/eoi_logo_main.svg" alt="Logo">
-        <h3>{% trans %}Choose a contest{% endtrans %}</h3>
-        <ul class="nav nav-list">
-    {% for c_name, c_iter in contest_list|dictsort(by="key") %}
-            <li>
-		    {% if c_iter.stop > now and c_iter.start < endofday  %} <a href="{{ url(c_iter.name) }}">{{ c_iter.description }}</a> {% endif %} 
-            </li>
-    {% endfor %}
-        </ul>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<style>
+        .button{
+            FONT-WEIGHT: 100;
+            border: none;
+            background: #BB8D32;
+            border-radius: 5px;
+            padding: 10;
+            font-size: 18px;
+            color: white;
+            margin-top: 15px;
+            cursor: pointer;
+            margin-right: 50px;
+            font-family: sans-serif;
+            margin-top: 25px;
+        }
+        .button:hover{
+            background-color: #BC7E04;
+        }
+</style>
+    <div >
+	<div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                        <div style="text-align: center;">
+                        <img src="static/img/eoi_logo.svg" class="img-fluid" style="margin-top: 50px;">
+                        </div>
+                </div>
+            </div>
+        <div class="row">
+        <div class="col-md-12">
+        <div style="display: ; justify-content: space-between;">
+        
+            {% for c_name, c_iter in contest_list|dictsort(by="key") %}
+            {% if c_iter.stop > now and c_iter.start < endofday  %} 
+            <form action="{{ url(c_iter.name) }}"> <button type="submit" class="btn btn-block button">{{ c_iter.description }}</button> </form> {% endif %} 
+            {% endfor %}
+                     </div>
+                </div>
+            </div>
+        
+        
+        </div>
     </div>
 {% endblock body %}
