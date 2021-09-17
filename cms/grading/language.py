@@ -36,7 +36,7 @@ class Language(metaclass=ABCMeta):
 
         Should be uniquely describing the language and the
         version/compiler used, for example "C++11 / g++" better than "C++",
-        or "Java 1.5 / JDK", "Java 1.4 / gcj" better than "Java".
+        or "Java 1.5 / JDK" better than "Java".
 
         return (str): the name
 
@@ -97,6 +97,11 @@ class Language(metaclass=ABCMeta):
         """Default object extension for the language."""
         return self.object_extensions[0] \
             if len(self.object_extensions) > 0 else None
+
+    @property
+    def executable_extension(self):
+        """Executable file extension for this language (including the dot)."""
+        return ""
 
     @abstractmethod
     def get_compilation_commands(self,

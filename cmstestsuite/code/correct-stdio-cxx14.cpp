@@ -1,11 +1,9 @@
 #include <iostream>
-#include <memory>
 
-// Test C++14 support
+static_assert(__cplusplus == 201402L, "C++14 expected");
 
 int main() {
-    auto ptr = std::make_unique<int>();
-    std::cin >> *ptr;
-    std::cout << "correct " << *ptr << std::endl;
-    return 0b0'0'0;
+    int n;
+    std::cin >> n;
+    std::cout << "correct " << n << std::endl;
 }
