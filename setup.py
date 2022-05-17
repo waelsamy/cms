@@ -139,7 +139,8 @@ setup(
              "scripts/cmsPrintingService",
              "scripts/cmsRankingWebServer",
              "scripts/cmsInitDB",
-             "scripts/cmsDropDB"],
+             "scripts/cmsDropDB",
+             "scripts/cmsBuildCache"],
     entry_points={
         "console_scripts": [
             "cmsRunTests=cmstestsuite.RunTests:main",

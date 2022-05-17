@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+from cms import config
+from pathlib import Path
+import sys
+import hashlib
+import binascii
+import shutil
+
+c = Path(config.apio_cache_dir)
+c.mkdir(exist_ok=True, parents=True)
+
+if len(sys.argv) < 2:
+    print(f'Usage: {sys.argv[0]} dir-to-be-cached')
+    exit(1)
+
+files = []
+path = Path(sys.argv[1])
+if path.is_dir():
+    files = path.glob('**/*')
+else:
+    files = [path]
+
+for f in files:
+    if f.is_file():
+        h = hashlib.sha1()
+        h.update(f.read_bytes())
+        digest = binascii.b2a_hex(h.digest()).decode('ascii')
+        shutil.copy2(f, c / digest, follow_symlinks=True)
+        print('ADDED', digest, f)
