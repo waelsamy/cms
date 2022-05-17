@@ -793,9 +793,10 @@ class FileCacher:
                     dst.name, digest)
                 try:
                     shutil.copy2(dst.name, os.path.join(config.apio_cache_dir))
+                    # Still saves to database for safety
+                    # return digest
                 except:
                     logger.error('Fatal: fail to store ELF file')
-                return digest
 
             cache_file_path = os.path.join(self.file_dir, digest)
 
