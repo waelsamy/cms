@@ -193,6 +193,11 @@ class Config:
             paths += [os.path.join("/", "usr", "local", "etc", "cms.conf"),
                       os.path.join("/", "etc", "cms.conf")]
 
+
+        # APIO2022 Cache directory
+        self.rsync_server = 'TBD'
+        self.apio_cache_dir = os.path.join("/", "var", "cache", "cms")
+
         # Allow user to override config file path using environment
         # variable 'CMS_CONFIG'.
         CMS_CONFIG_ENV_VAR = "CMS_CONFIG"

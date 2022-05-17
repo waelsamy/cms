@@ -40,6 +40,7 @@ from cms import config, mkdir, rmtree
 from cms.db import SessionGen, Digest, FSObject, LargeObject
 from cmscommon.digest import Digester
 
+import shutil
 
 logger = logging.getLogger(__name__)
 
@@ -601,9 +602,18 @@ class FileCacher:
 
         ftmp_handle, temp_file_path = tempfile.mkstemp(dir=self.temp_dir,
                                                        text=False)
-        with open(ftmp_handle, 'wb') as ftmp, \
-                self.backend.get_file(digest) as fobj:
-            copyfileobj(fobj, ftmp, self.CHUNK_SIZE)
+        with open(ftmp_handle, 'wb') as ftmp:
+            try:
+                # **WARN** Hacked for APIO2022.
+                # See if file is in /var/cache/cms (default) before asking db.
+                fscache_fname = os.path.join(config.apio_cache_dir, digest)
+                with open(fscache_fname, 'rb') as fobj:
+                    copyfileobj(fobj, ftmp, self.CHUNK_SIZE)
+                logger.debug(f'Local cache HIT: {digest}')
+            except:
+                logger.debug(f'Local cache MISS: {digest}')
+                with self.backend.get_file(digest) as fobj:
+                    copyfileobj(fobj, ftmp, self.CHUNK_SIZE)
 
         if not cache_only:
             # We allow anyone to delete files from the cache directory
@@ -757,6 +767,7 @@ class FileCacher:
                                          dir=self.temp_dir) as dst:
             d = Digester()
             buf = src.read(self.CHUNK_SIZE)
+            is_elf = (buf[:4] == b'\x7fELF')
             while len(buf) > 0:
                 d.update(buf)
                 while len(buf) > 0:
@@ -771,6 +782,20 @@ class FileCacher:
             dst.flush()
 
             logger.debug("File has digest %s.", digest)
+
+            if is_elf:
+                # **WARN** Hacked for APIO2022.
+                # If this is an ELF file, don't push it to database.
+                # TODO: rsync with TWO servers (address to be determined)
+                logger.error("ELF file to be synced with %s",
+                    config.rsync_server)
+                logger.debug("Write ELF file %s (%s) to local cache",
+                    dst.name, digest)
+                try:
+                    shutil.copy2(dst.name, os.path.join(config.apio_cache_dir))
+                except:
+                    logger.error('Fatal: fail to store ELF file')
+                return digest
 
             cache_file_path = os.path.join(self.file_dir, digest)
 
