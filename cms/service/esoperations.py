@@ -164,6 +164,8 @@ def submission_get_operations(submission_result, submission, dataset):
     if submission_to_compile(submission_result):
         if not dataset.active:
             priority = PriorityQueue.PRIORITY_EXTRA_LOW
+        elif submission.participation.hidden is True:
+            priority = PriorityQueue.PRIORITY_EXTRA_LOW
         elif submission_result is None or \
                 submission_result.compilation_tries == 0:
             priority = PriorityQueue.PRIORITY_HIGH
@@ -178,6 +180,8 @@ def submission_get_operations(submission_result, submission, dataset):
 
     elif submission_to_evaluate(submission_result):
         if not dataset.active:
+            priority = PriorityQueue.PRIORITY_EXTRA_LOW
+        elif submission.participation.hidden is True:
             priority = PriorityQueue.PRIORITY_EXTRA_LOW
         elif submission_result.evaluation_tries == 0:
             priority = PriorityQueue.PRIORITY_MEDIUM
@@ -214,6 +218,8 @@ def user_test_get_operations(user_test, dataset):
     if user_test_to_compile(user_test_result):
         if not dataset.active:
             priority = PriorityQueue.PRIORITY_EXTRA_LOW
+        elif user_test.participation.hidden is True:
+            priority = PriorityQueue.PRIORITY_EXTRA_LOW
         elif user_test_result is None or \
                 user_test_result.compilation_tries == 0:
             priority = PriorityQueue.PRIORITY_HIGH
@@ -228,6 +234,8 @@ def user_test_get_operations(user_test, dataset):
 
     elif user_test_to_evaluate(user_test_result):
         if not dataset.active:
+            priority = PriorityQueue.PRIORITY_EXTRA_LOW
+        elif user_test.participation.hidden is True:
             priority = PriorityQueue.PRIORITY_EXTRA_LOW
         elif user_test_result.evaluation_tries == 0:
             priority = PriorityQueue.PRIORITY_MEDIUM
