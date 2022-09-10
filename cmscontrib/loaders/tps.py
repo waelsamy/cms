@@ -26,6 +26,7 @@ import subprocess
 from datetime import timedelta
 
 from cms.db import Task, Dataset, Manager, Testcase, Attachment, Statement
+from cmscommon.constants import SCORE_MODE_MAX_SUBTASK
 from .base_loader import TaskLoader
 
 
@@ -97,7 +98,17 @@ class TpsTaskLoader(TaskLoader):
             par_processes = '%s_num_processes' % par_prefix
             if par_processes not in task_type_parameters:
                 task_type_parameters[par_processes] = 1
-            return [task_type_parameters[par_processes], "stub", "fifo_io"]
+
+            # Checker
+            checker_dir = os.path.join(self.path, "checker")
+            checker_src = os.path.join(checker_dir, "checker.cpp")
+
+            return [
+                task_type_parameters[par_processes],
+                "stub",
+                "std_io",
+                "eval_checker" if os.path.exists(checker_src) else "eval_manager"
+            ]
 
         if task_type == 'TwoSteps' or task_type == 'OutputOnly':
             return [evaluation_param]
@@ -123,6 +134,7 @@ class TpsTaskLoader(TaskLoader):
 
         args["name"] = name
         args["title"] = data['name']
+        args["score_mode"] = SCORE_MODE_MAX_SUBTASK
 
         # Statements
         if get_statement:

@@ -74,11 +74,11 @@ class TestImportTask(DatabaseMixin, unittest.TestCase):
 
     @staticmethod
     def do_import(task, contest_id, update,
-                  prefix=None, override_name=None, task_has_changed=False):
+                  prefix=None, override_name=None, task_has_changed=False, dataset_description=None):
         """Create an importer and call do_import in a convenient way"""
         return TaskImporter(
             "path", prefix, override_name, update, False, contest_id,
-            fake_loader_factory(task, task_has_changed)).do_import()
+            fake_loader_factory(task, task_has_changed), dataset_description).do_import()
 
     def assertTaskInDb(self, task_name, title, contest_id,
                        task_id=None, active_dataset_id=None, dataset_ids=None,
@@ -186,13 +186,31 @@ class TestImportTask(DatabaseMixin, unittest.TestCase):
                                                   new_desc],
                             active_dataset_id=self.dataset_id)
 
+    def test_task_exists_update_new_dataset_force_description(self):
+        # Task exists, and we update it, attaching it to the same contest.
+        # The existing dataset should be kept, and the new one should be added with a description stated in the flag.
+        new_title = "new_title"
+        new_task = self.get_task(name=self.task_name, title=new_title)
+        dummy_desc = "dummy_desc"
+        new_desc = "new_desc"
+        self.get_dataset(task=new_task, description=dummy_desc)
+        ret = self.do_import(new_task, self.contest_id, update=True,
+                             task_has_changed=True, dataset_description=new_desc)
+
+        self.assertTrue(ret)
+        self.assertTaskInDb(self.task_name, new_title, self.contest_id,
+                            task_id=self.task_id,
+                            dataset_descriptions=[self.dataset_description,
+                                                  new_desc],
+                            active_dataset_id=self.dataset_id)
+
     def test_task_exists_update_overwrite_dataset(self):
         # Task exists, and we update it, attaching it to the same contest.
         # The existing dataset should be overwritten by the new one, and we
         # check by looking at the task type.
         new_title = "new_title"
         new_task = self.get_task(name=self.task_name, title=new_title)
-        new_task_type = "Batch"
+        new_task_type = "OutputOnly"
         self.get_dataset(task=new_task, description=self.dataset_description,
                          task_type=new_task_type)
         self.assertNotEqual(new_task_type, self.dataset.task_type)
@@ -203,7 +221,7 @@ class TestImportTask(DatabaseMixin, unittest.TestCase):
         self.assertTaskInDb(self.task_name, new_title, self.contest_id,
                             task_id=self.task_id,
                             dataset_descriptions=[self.dataset_description],
-                            dataset_task_types=["Batch"])
+                            dataset_task_types=["OutputOnly"])
 
     def test_task_exists_update_new_manager(self):
         # Task exists, and we update it, attaching it to the same contest.

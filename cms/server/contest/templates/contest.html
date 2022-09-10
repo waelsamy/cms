@@ -178,7 +178,7 @@ $(document).ready(function () {
                                     <span id="unread_count" class="label label-warning no_unread"></span>
                                 </a>
                             </li>
-    {% if actual_phase == 0 or actual_phase == 3 or participation.unrestricted %}
+    {% if actual_phase >= 0 or participation.unrestricted %}
         {% for t_iter in contest.tasks %}
                             <li class="nav-header">
                                 {{ t_iter.name }}
@@ -186,9 +186,12 @@ $(document).ready(function () {
                             <li{% if page == "task_description" and task == t_iter %} class="active"{% endif %}>
                                 <a href="{{ contest_url("tasks", t_iter.name, "description") }}">{% trans %}Statement{% endtrans %}</a>
                             </li>
-                            <li{% if page == "task_submissions" and task == t_iter %} class="active"{% endif %}>
-                                <a href="{{ contest_url("tasks", t_iter.name, "submissions") }}">{% trans %}Submissions{% endtrans %}</a>
-                            </li>
+                            {% set task_type = get_task_type(dataset=t_iter.active_dataset) %}
+                            {% if task_type.ALLOW_SUBMISSION %}
+                                <li{% if page == "task_submissions" and task == t_iter %} class="active"{% endif %}>
+                                    <a href="{{ contest_url("tasks", t_iter.name, "submissions") }}">{% trans %}Submissions{% endtrans %}</a>
+                                </li>
+                            {% endif %}
         {% endfor %}
     {% endif %}
                             <li class="divider"></li>

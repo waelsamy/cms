@@ -67,9 +67,15 @@ class SubmitHandler(ContestHandler):
     """
 
     @tornado_web.authenticated
-    @actual_phase_required(0, 3)
+    @actual_phase_required(0, 1, 2, 3)
     @multi_contest
     def post(self, task_name):
+        # Reject submission if the contest disallow unofficial submission outside of official window or analysis mode
+        if 0 < self.r_params["actual_phase"] < 3 and \
+                not self.contest.allow_unofficial_submission_before_analysis_mode:
+            self.redirect(self.contest_url())
+            return
+
         task = self.get_task(task_name)
         if task is None:
             raise tornado_web.HTTPError(404)
@@ -110,7 +116,7 @@ class TaskSubmissionsHandler(ContestHandler):
 
     """
     @tornado_web.authenticated
-    @actual_phase_required(0, 3)
+    @actual_phase_required(0, 1, 2, 3, 4)
     @multi_contest
     def get(self, task_name):
         participation = self.current_user
@@ -118,6 +124,10 @@ class TaskSubmissionsHandler(ContestHandler):
         task = self.get_task(task_name)
         if task is None:
             raise tornado_web.HTTPError(404)
+
+        task_type = task.active_dataset.task_type_object
+        if not task_type.ALLOW_SUBMISSION:
+            raise tornado.web.HTTPError(404)
 
         submissions = self.sql_session.query(Submission)\
             .filter(Submission.participation == participation)\
@@ -221,7 +231,7 @@ class SubmissionStatusHandler(ContestHandler):
             task.score_precision, translation=self.translation)
 
     @tornado_web.authenticated
-    @actual_phase_required(0, 3)
+    @actual_phase_required(0, 1, 2, 3, 4)
     @multi_contest
     def get(self, task_name, submission_num):
         task = self.get_task(task_name)
@@ -281,7 +291,7 @@ class SubmissionDetailsHandler(ContestHandler):
     refresh_cookie = False
 
     @tornado_web.authenticated
-    @actual_phase_required(0, 3)
+    @actual_phase_required(0, 1, 2, 3, 4)
     @multi_contest
     def get(self, task_name, submission_num):
         task = self.get_task(task_name)
@@ -322,7 +332,7 @@ class SubmissionFileHandler(FileHandler):
 
     """
     @tornado_web.authenticated
-    @actual_phase_required(0, 3)
+    @actual_phase_required(0, 1, 2, 3, 4)
     @multi_contest
     def get(self, task_name, submission_num, filename):
         if not self.contest.submissions_download_allowed:
