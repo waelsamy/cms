@@ -240,10 +240,10 @@ var Scoreboard = new function () {
 
         if (user['team']) {
             result += " \
-    <td class=\"team\"><img src=\"" + Config.get_flag_url(user["team"]) + "\" title=\"" + DataStore.teams[user["team"]]["name"] + "\" /></td>";
+    <td class=\"team\" title=\"" + DataStore.teams[user["team"]]["name"] + "\">" + user['key'] + "</td>";
         } else {
             result += " \
-    <td class=\"team\"></td>";
+    <td class=\"team\">" + user['key'] + "</td>";
         }
 
         var contests = DataStore.contest_list;
@@ -406,10 +406,9 @@ var Scoreboard = new function () {
         $row.children("td.f_name").text(user["f_name"]);
         $row.children("td.l_name").text(user["l_name"]);
 
+        $row.children(".team").text(user['key']);
         if (user["team"]) {
-            $row.children(".team").html("<img src=\"" + Config.get_flag_url(user["team"]) + "\" title=\"" + DataStore.teams[user["team"]]["name"] + "\" />");
-        } else {
-            $row.children(".team").text("");
+            $row.children(".team").attr("title", DataStore.teams[user["team"]]["name"]);
         }
     };
 
@@ -492,7 +491,7 @@ var Scoreboard = new function () {
     self.scroll_into_view = function (u_id) {
         var $row = $("tr.user[data-user=" + u_id + "]", self.tbody_el);
         var $frame = $("#InnerFrame");
-        var scroll = $row.position().top + $frame.scrollTop() + $row.height() / 2 - $frame.height() / 2;
+        var scroll = $row.position().top + $row.height() / 2 - $frame.height() / 2;
         $frame.scrollTop(scroll);
     };
 };
