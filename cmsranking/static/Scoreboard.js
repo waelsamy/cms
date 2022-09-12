@@ -154,7 +154,7 @@ var Scoreboard = new function () {
 <col class=\"sel\"/> \
 <col class=\"rank\"/> \
 <col class=\"f_name\"/> <col/><col/><col/><col/><col/><col/><col/><col/><col/> \
-<col class=\"l_name\"/> <col/><col/><col/><col/><col/><col/><col/><col/><col/> \
+<col/><col/><col/><col/><col/><col/> \
 <col class=\"team\"/>";
 
         var contests = DataStore.contest_list;
@@ -188,8 +188,7 @@ var Scoreboard = new function () {
 <tr> \
     <th class=\"sel\"></th> \
     <th class=\"rank\">Rank</th> \
-    <th colspan=\"10\" class=\"f_name\">First Name</th> \
-    <th colspan=\"10\" class=\"l_name\">Last Name</th> \
+    <th colspan=\"16\" class=\"f_name\">Name</th> \
     <th class=\"team\">Team</th>";
 
         var contests = DataStore.contest_list;
@@ -235,8 +234,7 @@ var Scoreboard = new function () {
 <tr class=\"user" + (user["selected"] > 0 ? " selected color" + user["selected"] : "") + "\" data-user=\"" + user["key"] + "\"> \
     <td class=\"sel\"></td> \
     <td class=\"rank\">" + user["rank"] + "</td> \
-    <td colspan=\"10\" class=\"f_name\">" + escapeHTML(user["f_name"]) + "</td> \
-    <td colspan=\"10\" class=\"l_name\">" + escapeHTML(user["l_name"]) + "</td>";
+    <td colspan=\"16\" class=\"f_name\">" + escapeHTML(user["f_name"]) + " " + escapeHTML(user["l_name"]) + "</td>";
 
         if (user['team']) {
             result += " \
@@ -405,7 +403,7 @@ var Scoreboard = new function () {
 
         $row.children("td.f_name").text(user["f_name"]);
         $row.children("td.l_name").text(user["l_name"]);
-
+        
         $row.children(".team").text(user['key']);
         if (user["team"]) {
             $row.children(".team").attr("title", DataStore.teams[user["team"]]["name"]);
@@ -491,7 +489,7 @@ var Scoreboard = new function () {
     self.scroll_into_view = function (u_id) {
         var $row = $("tr.user[data-user=" + u_id + "]", self.tbody_el);
         var $frame = $("#InnerFrame");
-        var scroll = $row.position().top + $row.height() / 2 - $frame.height() / 2;
+        var scroll = $row.position().top + $frame.scrollTop() + $row.height() / 2 - $frame.height() / 2;
         $frame.scrollTop(scroll);
     };
 };
